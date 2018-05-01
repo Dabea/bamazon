@@ -2,8 +2,6 @@ var mysql = require('mysql');
 require('dotenv').config();
 var inquirer = require('inquirer');
 
-console.log(process.env.PASSWORD)
-
 var connection = mysql.createConnection({
     host     : process.env.HOST,
     user     : 'root',
@@ -14,9 +12,7 @@ var connection = mysql.createConnection({
 
 
 const ProductList = function(){
-    
     connection.connect();
-   
     connection.query('SELECT * from products', function (error, results, fields) {
       if (error) throw error;
         for(let i =0; i < results.length; i ++){
@@ -26,8 +22,6 @@ const ProductList = function(){
         }
         inquirePurcaceById(results);
     });
-  
-  
 }
 
 
@@ -75,5 +69,5 @@ function updateStock(id , newQuanity){
     connection.end();
 }
 
- ProductList()
+ ProductList();
 
