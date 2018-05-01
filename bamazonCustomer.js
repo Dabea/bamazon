@@ -22,26 +22,58 @@ const ProductList = function(){
         for(let i =0; i < results.length; i ++){
             if(results[i].stock_quantity > 0){
                 console.log(`id:${results[i].item_id} Item ${results[i].product_name} Price: ${results[i].price}`);
-                
-            }
-           
+        }                                   
         }
-        inquirer.prompt([
-            {
-                type: 'input',
-                name: "id",
-                message: "What Item do you want to by (input id)"
-            }
-        ]).then(answers => {
-           purchase('123');
-        });
+        inquirePurcaceById(results);
     });
-   connection.end();
+  
   
 }
 
-function purchase(item){
-    console.log(item,'Has been bought')
+
+function inquirePurcaceById(results){
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: "id",
+            message: "What Item do you want to by (input id)"
+        }
+    ]).then(answers => {
+       buyQuanity(results[answers.id - 1]);
+    });
 }
 
-ProductList()
+function buyQuanity(results){
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: "quanity",
+            message: "How manny do you want to buy"
+        }
+    ]).then(answers => {
+      tryToPurchase(results, answers.quanity);
+    });
+}
+
+function tryToPurchase(item, quanity){
+    if(item.stock_quantity > quanity){
+        console.log('buy all the things')
+        const newQuanity = item.stock_quantity -quanity;
+        console.log(item)
+        updateStock(item.item_id, newQuanity)
+    }
+    else{
+        console.log('there is not enough stock to process theorder')
+    }
+}
+
+function updateStock(id , newQuanity){
+    connection.query("UPDATE products SET  stock_quantity=" + newQuanity + " WHERE item_id=" + id, function(err, results, fields ){
+        if(err) throw err;
+        
+    })
+    connection.end();
+}
+
+ ProductList()
+
