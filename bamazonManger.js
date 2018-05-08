@@ -143,11 +143,16 @@ function orderNewItem(){
         },
         {
             type: 'input',
+            name: "price",
+            message: "What is the Sale Price?"
+        },
+        {
+            type: 'input',
             name: "quanity",
             message: "How manny units do you have?"
         }
     ]).then(answers => {
-        addNewItem(answers.id, answers.name, answers.department, answers.quanity)
+        addNewItem(answers.id, answers.name, answers.department, answers.price, answers.quanity)
     });
 }
 
