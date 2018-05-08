@@ -33,8 +33,19 @@ function inquirePurcaceById(results){
             message: "What Item do you want to by (input id)"
         }
     ]).then(answers => {
-       buyQuanity(results[answers.id - 1]);
+        checkIfItemIdExists(results, answers.id)
     });
+}
+
+function checkIfItemIdExists(list , id){
+    const item = list.filter(item => item.item_id == id);
+    if((!Array.isArray(item) || !item.length)){
+     console.log('Invalid Id Please Try aagain')   
+     inquirePurcaceById(list);
+    }
+    else{
+     buyQuanity(item[0]);
+    }
 }
 
 function buyQuanity(results){
@@ -50,14 +61,15 @@ function buyQuanity(results){
 }
 
 function tryToPurchase(item, quanity){
+    
     if(item.stock_quantity > quanity){
-        console.log('buy all the things')
+        console.log(`You have bought ${quanity} ${item.product_name} Your Total Purchase Today Was:$${((quanity * item.price) * 1.075).toFixed(2)}`)
         const newQuanity = item.stock_quantity -quanity;
-        console.log(item)
         updateStock(item.item_id, newQuanity)
     }
     else{
-        console.log('there is not enough stock to process theorder')
+        console.log('there is not enough stock to process the order')
+        connection.end();
     }
 }
 

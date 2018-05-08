@@ -31,7 +31,7 @@ function mainMenu(){
             orderInfo();
             break;
         case 'Add New Product':
-            orderInfo();
+            orderNewItem();
             break;       
 
         default:
@@ -51,7 +51,7 @@ function displayAllProducts(){
     connection.query('SELECT * from products', function (error, results, fields) {
       if (error) throw error;
         for(let i =0; i < results.length; i ++){
-            console.log(`id:${results[i].item_id} Item ${results[i].product_name} Price: ${results[i].price}`);                                  
+            console.log(`id:${results[i].item_id} Item ${results[i].product_name} Price: ${results[i].price} Quanity: ${results[i].stock_quantity}`);                                  
         }
     });
     connection.end();
@@ -67,7 +67,7 @@ function displayLowProducts(){
       if (error) throw error;
         for(let i =0; i < results.length; i ++){
             if(results[i].stock_quantity > 5){
-                console.log(`id:${results[i].item_id} Item ${results[i].product_name} Price: ${results[i].price}`);
+                console.log(`id:${results[i].item_id} Item ${results[i].product_name} Price: ${results[i].price} Quanity: ${results[i].stock_quantity}`);
         }                                   
         }
     });
@@ -95,8 +95,8 @@ function updateStock(id , newOrder) {
  * @param {*} newOrder 
  */
 function addNewItem(item_id, product_name, department_name, price, stock_quantity) {
-    const sql = "INSERT INTO products (item_id, product_name, department_name, price, stock_quantity) VALUES ( "
-    connection.query("INSERT INTO products (item_id, product_name, department_name, price, stock_quantity) VALUES ( " + item_id + ", " + product_name + ", " + department_name + ", " + price + ", " + stock_quantity + " )", function(err, results, fields ){
+    const sql = "INSERT INTO products (item_id, product_name, department_name, price, stock_quantity) VALUES (?,?,?,?,?) "
+    connection.query(sql,[item_id, product_name, department_name, price, stock_quantity] , function(err, results, fields ){
         if(err) throw err;
         console.log(`${product_name} has been added to the database`)
     })
@@ -112,7 +112,7 @@ function orderInfo(){
         {
             type: 'input',
             name: "id",
-            message: "How manny new units do you have to add"
+            message: "Chose Item By Id"
         },
         {
             type: 'input',
@@ -124,6 +124,32 @@ function orderInfo(){
     });
 }
 
+function orderNewItem(){
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: "id",
+            message: "What is the Item Id?"
+        },
+        {
+            type: 'input',
+            name: "name",
+            message: "What is the Item Name?"
+        },
+        {
+            type: 'input',
+            name: "department",
+            message: "What is the Item Department?"
+        },
+        {
+            type: 'input',
+            name: "quanity",
+            message: "How manny units do you have?"
+        }
+    ]).then(answers => {
+        addNewItem(answers.id, answers.name, answers.department, answers.quanity)
+    });
+}
+
 mainMenu();
 
-//addNewItem( '11','HP  Laptop', 'tech', '499.99', '14');
